@@ -1,0 +1,16 @@
+{
+    "cmake.configureOnOpen": false,
+    "cmake.automaticReconfigure": false,
+    "cmake.sourceDirectory": "${workspaceFolder}/armgcc",
+    "C_Cpp.default.configurationProvider": "",
+    "files.exclude": {
+        "build": true
+    },
+    "files.associations": {
+        "*.h": "c"
+    },
+    "search.exclude": {
+        "build": true,
+        "starter_backup": true
+    }
+}

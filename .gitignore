@@ -1,0 +1,15 @@
+# Build output (regenerate with .\build.ps1)
+build/
+*.elf
+*.bin
+*.hex
+*.map
+*.o
+*.d
+
+# Editor / OS clutter
+.vscode/*.log
+.vscode/ipch/
+*.swp
+Thumbs.db
+.DS_Store

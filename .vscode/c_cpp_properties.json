@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "FRDM-MCXA153",
+            "compileCommands": "${workspaceFolder}/build/debug/compile_commands.json",
+            "compilerPath": "C:/Users/babaj/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-mingw-w64-x86_64-arm-none-eabi/bin/arm-none-eabi-gcc.exe",
+            "intelliSenseMode": "gcc-arm",
+            "cStandard": "gnu99",
+            "includePath": [
+                "${workspaceFolder}",
+                "C:/Users/babaj/Downloads/SDK_24_12_00_FRDM-MCXA153_FOR_MIC5_V10/devices/MCXA153",
+                "C:/Users/babaj/Downloads/SDK_24_12_00_FRDM-MCXA153_FOR_MIC5_V10/devices/MCXA153/periph",
+                "C:/Users/babaj/Downloads/SDK_24_12_00_FRDM-MCXA153_FOR_MIC5_V10/CMSIS/Core/Include",
+                "C:/Users/babaj/Downloads/SDK_24_12_00_FRDM-MCXA153_FOR_MIC5_V10/rtos/freertos/freertos-kernel/include",
+                "C:/Users/babaj/Downloads/SDK_24_12_00_FRDM-MCXA153_FOR_MIC5_V10/rtos/freertos/freertos-kernel/portable/GCC/ARM_CM33_NTZ/non_secure"
+            ],
+            "defines": ["CPU_MCXA153VLH", "MCUXPRESSO_SDK"]
+        }
+    ],
+    "version": 4
+}

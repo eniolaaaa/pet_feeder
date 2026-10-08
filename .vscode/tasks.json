@@ -1,0 +1,32 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build (debug)",
+            "type": "shell",
+            "command": "powershell -ExecutionPolicy Bypass -File ${workspaceFolder}/build.ps1",
+            "group": { "kind": "build", "isDefault": true },
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "Build (release)",
+            "type": "shell",
+            "command": "powershell -ExecutionPolicy Bypass -File ${workspaceFolder}/build.ps1 -Release",
+            "group": "build",
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "Clean build",
+            "type": "shell",
+            "command": "powershell -ExecutionPolicy Bypass -File ${workspaceFolder}/build.ps1 -Clean",
+            "group": "build",
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "Build and flash",
+            "type": "shell",
+            "command": "powershell -ExecutionPolicy Bypass -File ${workspaceFolder}/build.ps1 -Flash",
+            "problemMatcher": ["$gcc"]
+        }
+    ]
+}

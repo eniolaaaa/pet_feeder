@@ -1,0 +1,58 @@
+Console log, FRDM-MCXA153 pet feeder, 2026-10-07
+Serial Monitor (VS Code), COM3 (J-Link CDC UART), 115200 8N1
+Build: debug, APP_DEMO_TIMING = 1, APP_FAULT_MODE = 0, configTICK_RATE_HZ = 100
+Timestamps in [ ] are FreeRTOS ticks: 1 tick = 10 ms ([12000] = 120 s after reset)
+Log copied unchanged from the Serial Monitor:
+
+---- Opened the serial port COM3 ----
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[  12000] FED 1 portion(s) (schedule), today 6/6
+[  12120] NEW DAY
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+---- Sent utf8 encoded message: "help\r" ----
+commands: feed [n] | interval <s> | status
+MON heapFree=872 minEver=872 btnIrq=0 rx=5 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=238 logger=228 monitor=234
+[  14000] FED 1 portion(s) (schedule), today 1/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=5 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=238 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=5 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=238 logger=228 monitor=234
+[  16000] FED 1 portion(s) (schedule), today 2/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=5 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=238 logger=228 monitor=234
+---- Sent utf8 encoded message: "feed\r" ----
+[  17424] FED 1 portion(s) (command), today 3/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=10 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=238 logger=228 monitor=234
+[  18000] FED 1 portion(s) (schedule), today 4/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=10 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=238 logger=228 monitor=234
+---- Sent utf8 encoded message: "feed \r" ----
+[  19182] FED 1 portion(s) (command), today 5/6
+---- Sent utf8 encoded message: "f\r" ----
+commands: feed [n] | interval <s> | status
+MON heapFree=872 minEver=872 btnIrq=0 rx=18 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=238 logger=228 monitor=234
+[  20000] FED 1 portion(s) (schedule), today 6/6
+---- Sent utf8 encoded message: "nn\r" ----
+commands: feed [n] | interval <s> | status
+MON heapFree=872 minEver=872 btnIrq=0 rx=21 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=238 logger=228 monitor=234
+---- Sent utf8 encoded message: "interval\r" ----
+commands: feed [n] | interval <s> | status
+MON heapFree=872 minEver=872 btnIrq=0 rx=30 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=238 logger=228 monitor=234
+[  22000] REJECTED schedule: daily limit
+---- Sent utf8 encoded message: "feed 2\r" ----
+[  22568] REJECTED command: daily limit
+MON heapFree=872 minEver=872 btnIrq=0 rx=37 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=238 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=37 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=238 logger=228 monitor=234
+[  24000] REJECTED schedule: daily limit
+[  24000] NEW DAY

@@ -1,0 +1,51 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug pet_feeder (LinkServer)",
+            "type": "mcuxpresso-debug",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "executable": { "elf": "${workspaceFolder}/build/debug/pet_feeder.elf" },
+            "probeType": "LinkServer",
+            "gdbServerConfigs": {
+                "linkserver": {
+                    "device": "MCXA153",
+                    "core": "cm33_core0"
+                }
+            },
+            "toolchainPath": "C:/Users/babaj/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-mingw-w64-x86_64-arm-none-eabi/bin",
+            "gdbClientPath": "C:/Users/babaj/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-mingw-w64-x86_64-arm-none-eabi/bin/arm-none-eabi-gdb.exe",
+            "objdumpPath": "C:/Users/babaj/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-mingw-w64-x86_64-arm-none-eabi/bin/arm-none-eabi-objdump.exe",
+            "svdPath": "C:/Users/babaj/Downloads/SDK_24_12_00_FRDM-MCXA153_FOR_MIC5_V10/devices/MCXA153/MCXA153.xml",
+            "stopAtSymbol": "main",
+            "skipBuildBeforeDebug": true,
+            "preLaunchTask": "Build (debug)"
+        },
+        {
+            "name": "Debug pet_feeder (J-Link)",
+            "type": "mcuxpresso-debug",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "executable": { "elf": "${workspaceFolder}/build/debug/pet_feeder.elf" },
+            "probeType": "SEGGER",
+            "probeSerialNumber": "1061056793",
+            "showDevDebugOutput": "raw",
+            "gdbServerConfigs": {
+                "segger": {
+                    "device": "MCXA153",
+                    "interface": "SWD",
+                    "speed": "4000",
+                    "gdbServerPath": "C:/Program Files/SEGGER/JLink_V872/JLinkGDBServerCL.exe"
+                }
+            },
+            "toolchainPath": "C:/Users/babaj/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-mingw-w64-x86_64-arm-none-eabi/bin",
+            "gdbClientPath": "C:/Users/babaj/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-mingw-w64-x86_64-arm-none-eabi/bin/arm-none-eabi-gdb.exe",
+            "objdumpPath": "C:/Users/babaj/.mcuxpressotools/arm-gnu-toolchain-14.2.rel1-mingw-w64-x86_64-arm-none-eabi/bin/arm-none-eabi-objdump.exe",
+            "svdPath": "C:/Users/babaj/Downloads/SDK_24_12_00_FRDM-MCXA153_FOR_MIC5_V10/devices/MCXA153/MCXA153.xml",
+            "stopAtSymbol": "main",
+            "skipBuildBeforeDebug": true,
+            "preLaunchTask": "Build (debug)"
+        }
+    ]
+}
