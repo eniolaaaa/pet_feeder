@@ -1,0 +1,134 @@
+Console log, FRDM-MCXA153 pet feeder, 2026-10-09, test scenario 1
+Serial Monitor (VS Code), COM3, 115200 8N1, line ending CR
+Build: debug, APP_DEMO_TIMING = 1, APP_FAULT_MODE = 0, configTICK_RATE_HZ = 1000
+Timestamps in [ ] are FreeRTOS ticks: 1 tick = 1 ms
+Board running under the J-Link debugger ("Debug pet_feeder (J-Link)").
+Logs copied unchanged from the Serial Monitor (repeated MON lines kept).
+
+=== Part 1: feed 2 with breakpoints at app_tasks.c:237 and :140 ===
+(screenshots s1_a_*, s1_b_* were taken during the first "feed 2")
+
+---- Opened the serial port COM3 ----
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[  40000] FED 1 portion(s) (schedule), today 2/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[  60000] FED 1 portion(s) (schedule), today 3/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[  80000] FED 1 portion(s) (schedule), today 4/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[ 100000] FED 1 portion(s) (schedule), today 5/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[ 120000] FED 1 portion(s) (schedule), today 6/6
+[ 121200] NEW DAY
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[ 140000] FED 1 portion(s) (schedule), today 1/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[ 160000] FED 1 portion(s) (schedule), today 2/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[ 180000] FED 1 portion(s) (schedule), today 3/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[ 200000] FED 1 portion(s) (schedule), today 4/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[ 220000] FED 1 portion(s) (schedule), today 5/6
+---- Sent utf8 encoded message: "feed 2 \r" ----
+[ 221218] REJECTED command: cooldown
+MON heapFree=872 minEver=872 btnIrq=0 rx=8 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=8 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[ 240000] FED 1 portion(s) (schedule), today 6/6
+[ 241200] NEW DAY
+MON heapFree=872 minEver=872 btnIrq=0 rx=8 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=8 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[ 260000] FED 1 portion(s) (schedule), today 1/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=8 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=8 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[ 280000] FED 1 portion(s) (schedule), today 2/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=8 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=8 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[ 300000] FED 1 portion(s) (schedule), today 3/6
+---- Sent utf8 encoded message: "feed 2\r" ----
+[ 302557] REJECTED command: cooldown
+MON heapFree=872 minEver=872 btnIrq=0 rx=15 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=15 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[ 320000] FED 1 portion(s) (schedule), today 4/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=15 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=15 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[ 340000] FED 1 portion(s) (schedule), today 5/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=15 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=15 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[ 360000] FED 1 portion(s) (schedule), today 6/6
+[ 361200] NEW DAY
+MON heapFree=872 minEver=872 btnIrq=0 rx=15 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=15 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[ 380000] FED 1 portion(s) (schedule), today 1/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=15 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=15 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[ 400000] FED 1 portion(s) (schedule), today 2/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=15 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=15 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[ 420000] FED 1 portion(s) (schedule), today 3/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=15 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+
+=== Part 2: interval 60, then feed 2 (no breakpoints) ===
+
+MON heapFree=872 minEver=872 btnIrq=0 rx=15 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[ 560000] FED 1 portion(s) (schedule), today 4/6
+---- Sent utf8 encoded message: "interval 60\r" ----
+[ 565290] interval now 60 s
+MON heapFree=872 minEver=872 btnIrq=0 rx=27 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+---- Sent utf8 encoded message: "feed 2\r" ----
+MON heapFree=872 minEver=872 btnIrq=0 rx=34 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[ 578167] FED 2 portion(s) (command), today 6/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=34 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
