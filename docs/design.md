@@ -1,7 +1,7 @@
 # High-level design — pet feeder
 
 7 tasks + the timer service task, 2 interrupt handlers. The names below are
-exactly the names used in the code (`app_tasks.c`, `bsp_mcxa153.c`) and the
+exactly the names used in the code (`source/app_tasks.c`, `board/bsp_mcxa153_regs.c`) and the
 ones shown in the MCUXpresso FreeRTOS Task List / Queue List views.
 
 ```mermaid

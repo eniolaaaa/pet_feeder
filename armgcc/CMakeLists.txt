@@ -52,14 +52,40 @@ include(${ProjDirPath}/flags.cmake)
 
 include(${ProjDirPath}/config.cmake)
 
-# Every .c file in the project folder is compiled, so new modules only need to
-# be dropped into the folder (re-run CMake configure after adding a file).
-file(GLOB APP_SOURCES CONFIGURE_DEPENDS "${ProjDirPath}/../*.c")
+# Every .c file in source/ (application) and board/ (hardware layer) is
+# compiled, so new modules only need to be dropped into one of those folders
+# (re-run CMake configure, or .\build.ps1 -Clean, after adding a file).
+file(GLOB APP_SOURCES CONFIGURE_DEPENDS
+    "${ProjDirPath}/../source/*.c"
+    "${ProjDirPath}/../board/*.c"
+)
 
-add_executable(${MCUX_SDK_PROJECT_NAME} ${APP_SOURCES})
+# FreeRTOS kernel V11.1.0, copied from the course SDK into rtos/ so the project
+# contains all RTOS sources. Cortex-M33 port without TrustZone (the MCXA153
+# has no TrustZone), heap_4 for configTOTAL_HEAP_SIZE.
+set(RTOS_DIR "${ProjDirPath}/../rtos/freertos-kernel")
+set(RTOS_PORT_DIR "${RTOS_DIR}/portable/GCC/ARM_CM33_NTZ/non_secure")
+set(RTOS_SOURCES
+    ${RTOS_DIR}/croutine.c
+    ${RTOS_DIR}/event_groups.c
+    ${RTOS_DIR}/list.c
+    ${RTOS_DIR}/queue.c
+    ${RTOS_DIR}/stream_buffer.c
+    ${RTOS_DIR}/tasks.c
+    ${RTOS_DIR}/timers.c
+    ${RTOS_PORT_DIR}/mpu_wrappers_v2_asm.c
+    ${RTOS_PORT_DIR}/port.c
+    ${RTOS_PORT_DIR}/portasm.c
+    ${RTOS_DIR}/portable/MemMang/heap_4.c
+)
+
+add_executable(${MCUX_SDK_PROJECT_NAME} ${APP_SOURCES} ${RTOS_SOURCES})
 
 target_include_directories(${MCUX_SDK_PROJECT_NAME} PRIVATE
-"${ProjDirPath}/../"
+    "${ProjDirPath}/../source"
+    "${ProjDirPath}/../board"
+    "${RTOS_DIR}/include"
+    "${RTOS_PORT_DIR}"
 )
 
 include(${SdkRootDirPath}/devices/MCXA153/all_lib_device.cmake)

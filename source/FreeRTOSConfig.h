@@ -115,7 +115,13 @@
 
 /* configMAX_PRIORITIES Sets the number of available task priorities.  Tasks can
  * be assigned priorities of 0 to (configMAX_PRIORITIES - 1).  Zero is the lowest
- * priority. */
+ * priority.
+ *
+ * Pet feeder: 6 (course file: 5). The application uses priorities 0..5: IDLE 0,
+ * Logger and Monitor 1, Command, Status and the timer task 2, Schedule 3,
+ * Button 4, Feeder 5 (PRIO_* in app_config.h, reasons in the README). Each
+ * priority level costs one ready list (20 B of RAM), so no more levels than
+ * needed. */
 #define configMAX_PRIORITIES                       6
 
 /* configMINIMAL_STACK_SIZE defines the size of the stack used by the Idle task
@@ -235,14 +241,23 @@
  * used if configUSE_TIMERS is set to 1.  The timer task is a standard FreeRTOS
  * task, so its priority is set like any other task.  See
  * https://www.freertos.org/RTOS-software-timer-service-daemon-task.html  Only used
- * if configUSE_TIMERS is set to 1. */
+ * if configUSE_TIMERS is set to 1.
+ *
+ * Pet feeder: 2 (course file: configMAX_PRIORITIES - 1, the highest). The timer
+ * callbacks are not time-critical: the day timer only posts a "new day" request
+ * to FeedQ and the heartbeat blinks the green LED. At the highest priority the
+ * timer task could delay the Feeder closing the hatch, so it runs at the level
+ * of the other non-critical tasks (Command, Status). */
 #define configTIMER_TASK_PRIORITY       2
 
 /* configTIMER_TASK_STACK_DEPTH sets the size of the stack allocated to the
  * timer task (in words, not in bytes!).  The timer task is a standard FreeRTOS
  * task.  See https://www.freertos.org/RTOS-software-timer-service-daemon-task.html
  * Only used if configUSE_TIMERS is set to 1. */
-#define configTIMER_TASK_STACK_DEPTH    configMINIMAL_STACK_SIZE  /* 256 words, already more than the design needs (180) */
+/* Pet feeder: unchanged (configMINIMAL_STACK_SIZE = 256 words = 1 KB). The two
+ * timer callbacks are tiny: the RTOS-aware debugger showed a peak use of 224 B
+ * (56 words) on the board, so this leaves a wide margin. */
+#define configTIMER_TASK_STACK_DEPTH    configMINIMAL_STACK_SIZE
 
 /* configTIMER_QUEUE_LENGTH sets the length of the queue (the number of discrete
  * items the queue can hold) used to send commands to the timer task.  See
@@ -271,7 +286,19 @@
 /* Sets the total size of the FreeRTOS heap, in bytes, when heap_1.c, heap_2.c
  * or heap_4.c are included in the build.  This value is defaulted to 4096 bytes but
  * it must be tailored to each application.  Note the heap will appear in the .bss
- * section.  See https://www.freertos.org/a00111.html. */
+ * section.  See https://www.freertos.org/a00111.html.
+ *
+ * Pet feeder: 14 KB (course file: 12 KB). Every RTOS object is created from
+ * this heap (heap_4) before the scheduler starts: 9 task stacks (the 7 tasks
+ * in app_config.h = 2176 words, plus IDLE and Tmr Svc at 256 words each, so
+ * 10 752 B), their TCBs, FeedQ, LogQ, StatsBox, ButtonSem, ConsoleMtx, the
+ * event group, the 64 B UART stream buffer and 2 timers. Measured on the board
+ * (Monitor task, "MON heapFree / minEver"): 872 B free and minimum-ever free
+ * 872 B, so 13 464 B is in use and nothing is allocated after start-up. The
+ * course value of 12 288 B is too small for this set. Total RAM use with the
+ * heap in .bss: 18 360 B of the 24 KB data region. A task or queue added
+ * later must fit in the 872 B left, or this value has to grow;
+ * configUSE_MALLOC_FAILED_HOOK reports it if it doesn't fit. */
 #define configTOTAL_HEAP_SIZE                        (14*1024)
 
 /* Set configAPPLICATION_ALLOCATED_HEAP to 1 to have the application allocate
@@ -346,7 +373,16 @@
  * catch most (but not all) stack overflows.  The application writer must provide
  * the stack overflow callback when configCHECK_FOR_STACK_OVERFLOW is set to 1.
  * See https://www.freertos.org/Stacks-and-stack-overflow-checking.html  Defaults
- * to 0 if left undefined. */
+ * to 0 if left undefined.
+ *
+ * Pet feeder: 2 (course file: 0). Method 2 checks the 16-byte pattern at the end
+ * of the stack of the task being switched out, so it also catches an overflow
+ * that has already unwound again. vApplicationStackOverflowHook() in
+ * app_tasks.c prints the task name and stops. The stacks have a wide margin
+ * today (MON on the board: Feeder 196, Command 310, Logger 228 and Monitor 234
+ * words free), but a check that
+ * catches a mistake when the code changes is worth the small cost per context
+ * switch. */
 #define configCHECK_FOR_STACK_OVERFLOW        2
 
 /******************************************************************************/
@@ -584,7 +620,9 @@
 #define INCLUDE_xEventGroupSetBitFromISR       1
 #define INCLUDE_xTimerPendFunctionCall         1
 #define INCLUDE_xTaskAbortDelay                0
-#define INCLUDE_xTaskGetHandle                 1
+#define INCLUDE_xTaskGetHandle                 1   /* Pet feeder: 1 (course file: 0). The
+                                                     * Monitor task looks up tasks by name
+                                                     * to print their stack high-water marks */
 #define INCLUDE_xTaskResumeFromISR             1
 
 #if defined(__ICCARM__)||defined(__CC_ARM)||defined(__GNUC__)

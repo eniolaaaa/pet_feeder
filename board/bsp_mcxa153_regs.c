@@ -1,10 +1,9 @@
 /*
  * bsp_mcxa153_regs.c - board layer for the FRDM-MCXA153, REGISTER LEVEL.
  *
- * Use this file instead of board/frdmmcxa153/bsp_mcxa153.c when the project is
- * based on the MIC5 course example (no NXP SDK drivers). It only needs the
- * device header (MCXA153.h via fsl_device_registers.h / CMSIS).
- * Put exactly ONE of the two bsp_*.c files in the project.
+ * Register level in the style of the MIC5 course examples: no NXP SDK
+ * drivers, only the device header (MCXA153.h via fsl_device_registers.h /
+ * CMSIS). Implements the interface in source/bsp.h.
  *
  * Interrupt handler #1: GPIO1_IRQHandler   SW3 (P1_7), falling edge -> app_button_isr()   NVIC prio 4
  * Interrupt handler #2: LPUART0_IRQHandler console RX (MCU-Link VCOM) -> app_uart_rx_isr() NVIC prio 3

@@ -31,7 +31,7 @@ SET(CMAKE_ASM_FLAGS_RELEASE " \
 ")
 SET(CMAKE_C_FLAGS_DEBUG " \
     ${CMAKE_C_FLAGS_DEBUG} \
-    -include ${ProjDirPath}/../mcux_config.h \
+    -include ${ProjDirPath}/../board/mcux_config.h \
     -DDEBUG \
     -DMCUX_META_BUILD \
     -DMCUXPRESSO_SDK \
@@ -52,7 +52,7 @@ SET(CMAKE_C_FLAGS_DEBUG " \
 ")
 SET(CMAKE_C_FLAGS_RELEASE " \
     ${CMAKE_C_FLAGS_RELEASE} \
-    -include ${ProjDirPath}/../mcux_config.h \
+    -include ${ProjDirPath}/../board/mcux_config.h \
     -DNDEBUG \
     -DMCUX_META_BUILD \
     -DMCUXPRESSO_SDK \

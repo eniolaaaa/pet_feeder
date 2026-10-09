@@ -4,7 +4,8 @@ Each scenario has an **expected behaviour** (timing diagram) and the **actual
 behaviour** from the RTOS-aware debugger.
 
 How the diagrams were made: the expected diagrams follow from the design.
-They were checked in the PC simulator, which runs the same application code,
+They were checked in the PC simulator from the design phase (FreeRTOS POSIX
+port, kept outside this repository), which runs the same application code,
 injects the button presses and UART commands from a script
 (`sim/bsp_posix.c`) and logs every context switch to `sim_trace.csv`.
 `tools/trace_to_ascii.py` turns a time window into a diagram.

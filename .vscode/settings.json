@@ -10,7 +10,6 @@
         "*.h": "c"
     },
     "search.exclude": {
-        "build": true,
-        "starter_backup": true
+        "build": true
     }
 }

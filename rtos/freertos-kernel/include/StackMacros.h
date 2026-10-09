@@ -1,9 +1,8 @@
 /*
- * FreeRTOS V202107.00
- * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * FreeRTOS Kernel V11.1.0
+ * Copyright (C) 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
- * Updated by Hugo Arends February 2024 as a demo for the FRDM-MCXA153 board
- * HAN University of Applied Sciences
+ * SPDX-License-Identifier: MIT
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -22,22 +21,14 @@
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * http://www.FreeRTOS.org
- * http://aws.amazon.com/freertos
+ * https://www.FreeRTOS.org
+ * https://github.com/FreeRTOS
  *
- * 1 tab == 4 spaces!
  */
 
-#ifndef SERIAL_COMMS_H
-#define SERIAL_COMMS_H
 
-#include "FreeRTOS.h"
-#include "FreeRTOSConfig.h"
-#include "portmacrocommon.h"
+#ifndef _MSC_VER /* Visual Studio doesn't support #warning. */
+    #warning The name of this file has changed to stack_macros.h.  Please update your code accordingly.  This source file (which has the original name) will be removed in a future release.
+#endif
 
-portBASE_TYPE xSerialPortInit( unsigned long ulWantedBaud, unsigned portBASE_TYPE uxQueueLength );
-portBASE_TYPE xSerialGetChar( char * pcRxedChar, TickType_t xBlockTime );
-portBASE_TYPE xSerialPutChar( char cOutChar, TickType_t xBlockTime );
-void vSerialPutString( const char * const pcString );
-
-#endif /* ifndef SERIAL_COMMS_H */
+#include "stack_macros.h"

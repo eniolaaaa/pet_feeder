@@ -3,7 +3,8 @@
  *
  * The application (app_tasks.c) only talks to the hardware through these
  * functions, so the same RTOS code runs on the FRDM-MCXA153
- * (board/frdmmcxa153/bsp_mcxa153.c) and in the PC simulator (sim/bsp_posix.c).
+ * (board/bsp_mcxa153_regs.c) and in the PC simulator used during the design
+ * (FreeRTOS POSIX port, not part of this repository).
  */
 #ifndef BSP_H
 #define BSP_H

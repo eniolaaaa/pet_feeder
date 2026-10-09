@@ -1,16 +1,17 @@
 # Using the code in the MIC5 course project (register level, no SDK drivers)
 
-The course-example project compiles every `.c` file in its folder. Copy these
+This repository builds on its own (see the README). This page is only needed
+if you want to run the application inside the MIC5 course example project
+instead. That project compiles every `.c` file in its folder. Copy these
 files into it:
 
 | Copy | Notes |
 |------|-------|
 | `source/app_tasks.c`, `app_tasks.h`, `app_config.h`, `bsp.h` | the application, unchanged |
-| `board/frdmmcxa153_course/bsp_mcxa153_regs.c` | register-level board layer |
+| `board/bsp_mcxa153_regs.c` | register-level board layer |
 | `source/main.c` | **replace** the course `main.c` (two `main()` functions will not link), or call `bsp_init(); app_create(); vTaskStartScheduler();` from the course `main()` |
 
-Do **not** copy `board/frdmmcxa153/bsp_mcxa153.c`, because it needs the NXP SDK
-drivers. Do not copy `sim/` either.
+The course project brings its own FreeRTOS kernel, so don't copy `rtos/`.
 
 ## Check for duplicates
 - `vApplicationStackOverflowHook` and `vApplicationMallocFailedHook` are

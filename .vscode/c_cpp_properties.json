@@ -7,14 +7,18 @@
             "intelliSenseMode": "gcc-arm",
             "cStandard": "gnu99",
             "includePath": [
-                "${workspaceFolder}",
+                "${workspaceFolder}/source",
+                "${workspaceFolder}/board",
+                "${workspaceFolder}/rtos/freertos-kernel/include",
+                "${workspaceFolder}/rtos/freertos-kernel/portable/GCC/ARM_CM33_NTZ/non_secure",
                 "C:/Users/babaj/Downloads/SDK_24_12_00_FRDM-MCXA153_FOR_MIC5_V10/devices/MCXA153",
                 "C:/Users/babaj/Downloads/SDK_24_12_00_FRDM-MCXA153_FOR_MIC5_V10/devices/MCXA153/periph",
-                "C:/Users/babaj/Downloads/SDK_24_12_00_FRDM-MCXA153_FOR_MIC5_V10/CMSIS/Core/Include",
-                "C:/Users/babaj/Downloads/SDK_24_12_00_FRDM-MCXA153_FOR_MIC5_V10/rtos/freertos/freertos-kernel/include",
-                "C:/Users/babaj/Downloads/SDK_24_12_00_FRDM-MCXA153_FOR_MIC5_V10/rtos/freertos/freertos-kernel/portable/GCC/ARM_CM33_NTZ/non_secure"
+                "C:/Users/babaj/Downloads/SDK_24_12_00_FRDM-MCXA153_FOR_MIC5_V10/CMSIS/Core/Include"
             ],
-            "defines": ["CPU_MCXA153VLH", "MCUXPRESSO_SDK"]
+            "defines": [
+                "CPU_MCXA153VLH",
+                "MCUXPRESSO_SDK"
+            ]
         }
     ],
     "version": 4
