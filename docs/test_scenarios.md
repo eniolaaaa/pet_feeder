@@ -335,11 +335,75 @@ the *end* of the previous meal. Alternatives considered:
    doesn't cover the `feed` command, so the rule belongs in the Feeder, which
    owns the servo.
 
-**Actual on the board:** build with `APP_FAULT_MODE=1` and
-`APP_DEMO_TIMING=1`, type `interval 10`, and press SW3 while the blue LED is
-on after a scheduled meal. Breakpoint on `m.kind = LOG_FED`. It hits twice in
-a row, and Queue List shows FeedQ 1/4 at the first hit.
-*TODO(eni): screenshots.*
+**Actual on the board (2026-10-09):** build with `APP_FAULT_MODE = 1` and
+`APP_DEMO_TIMING = 1`, "Debug pet_feeder (J-Link)", one breakpoint on
+`m.kind = LOG_FED` (`app_tasks.c:174`, reached at the end of every meal).
+`interval 10` after reset, SW3 pressed once while the blue LED of a scheduled
+meal was on. Watch: FeedQ fill level and the Feeder's locals `r.source`
+(who asked for this meal), `now` (meal start), `st.last_feed_tick` (meal end)
+and `st.portions_today`. Console log:
+[test_logs/2026-10-09_scenario3_console.txt](test_logs/2026-10-09_scenario3_console.txt).
+
+*Hit 1:* end of the scheduled meal.
+
+![Hit 1, tasks](screenshots/s3_a_tasks.png)
+![Hit 1, watch](screenshots/s3_a_watch.png)
+
+*Hit 2:* reached with Continue (F5), 1.2 s later, without any other input.
+
+![Hit 2, tasks](screenshots/s3_b_tasks.png)
+![Hit 2, watch](screenshots/s3_b_watch.png)
+
+| | Hit 1 | Hit 2 |
+|---|---|---|
+| `r.source` | `FEED_SCHEDULED` | `FEED_BUTTON` |
+| meal start (`now`) | 27 462 | 28 662 |
+| meal end (`st.last_feed_tick`) | 28 662 | 29 862 |
+| `st.portions_today` | 1 | 2 |
+| FeedQ | 1 / 4 (button request waiting) | 0 / 4 |
+| Feeder | Running | Running |
+| Status | Ready (woken to switch the LED off, lower priority) | Ready |
+| Logger | Suspended (first meal not logged yet) | Suspended (first meal logged during meal 2) |
+
+Console:
+```
+[  27462] FED 1 portion(s) (schedule), today 1/6
+[  28662] FED 1 portion(s) (button), today 2/6
+```
+
+**Comparison:**
+
+| Aspect | Expected (normal build) | Actual (fault build, board) | Verdict |
+|---|---|---|---|
+| Button request during the meal | waits in FeedQ | hit 1: FeedQ 1/4 | match |
+| After the scheduled meal | button request rejected (cooldown) | second meal started at 28 662 = end of the first meal, 0 ms gap | **mismatch** (the injected fault) |
+| Portions | `today` 1/6 | `today` 2/6 | **mismatch**: the pet got 2 meals |
+| Blue LED | on for 1.2 s | on for 2.4 s | **mismatch** |
+| Order of tasks | Feeder first, then Status and Logger | Feeder takes the next request from FeedQ without blocking; Logger prints meal 1 only while the Feeder is blocked in meal 2 | as in the simulator trace |
+| Timing | — | board ticks identical to the simulator's prediction (meal = 1 200 ms, second meal at the end tick of the first) | match |
+
+The board shows the same error as the simulator trace above, with the same
+cause. The debugger pins it down to one place: at hit 2 `r.source` is
+`FEED_BUTTON` and `now` equals the previous `st.last_feed_tick`, so the
+Feeder accepted a request 0 ms after a meal. The queue, the Button task and
+the Schedule task all did their job; the missing rule is the cooldown check
+in `FeederTask`, which `APP_FAULT_MODE = 1` compiles out
+(`app_tasks.c:149-155`). With `APP_FAULT_MODE = 0` the same input gives
+`REJECTED button: cooldown` (scenario 2, runs 2 and 3).
+
+**Conclusion:** this scenario shows how a missing rule in one task causes an
+error that only appears through the interaction of several tasks. The
+Schedule and Button tasks both produced a correct request, and FeedQ kept the
+button request safe while the Feeder was busy, exactly as designed. But
+because the Feeder has the highest priority and found a request waiting, it
+started the second meal in the same tick the first one ended, before the
+Status and Logger tasks had even run. The RTOS-aware debugger made this
+visible: `r.source` and the two tick values showed which request caused the
+second meal and that there was no gap at all. The fix belongs in the Feeder,
+because it is the only task that drives the servo and sees every request,
+whatever its source.
+
+*TODO(eni): draft written with AI help, edit into your own words.*
 
 ---
 

@@ -1,0 +1,13 @@
+Console log, FRDM-MCXA153 pet feeder, 2026-10-09, test scenario 3
+(double feeding, deliberate fault)
+Serial Monitor (VS Code), COM3, 115200 8N1, line ending CR
+Build: debug, APP_DEMO_TIMING = 1, APP_FAULT_MODE = 1 (Feeder does not check
+the cooldown), configTICK_RATE_HZ = 1000
+Board running under the J-Link debugger, breakpoint on app_tasks.c:174
+(m.kind = LOG_FED). "interval 10" typed after reset; SW3 pressed once while
+the blue LED of the scheduled meal was on.
+Lines copied unchanged from the Serial Monitor (excerpt around the two meals).
+
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[  27462] FED 1 portion(s) (schedule), today 1/6
+[  28662] FED 1 portion(s) (button), today 2/6
