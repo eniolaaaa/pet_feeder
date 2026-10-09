@@ -232,8 +232,37 @@ during the meal: a fifth request would have been dropped (`dropFeed`).
 The cooldown rule in the Feeder hides the debounce problem from the pet:
 every extra request is rejected. But the extra requests do fill FeedQ, and
 with a full queue a legitimate request (for example the new-day marker) could
-be dropped. Possible fixes: a longer debounce (50–100 ms), or let the Button
-task wait until SW3 is released before it accepts the next press.
+be dropped.
+
+**Tasks involved in the error:** the GPIO1 ISR (gives ButtonSem on every
+falling edge, bounces included), the Button task (debounce and pin check) and,
+through FeedQ, the Feeder. The ISR and the Feeder behave correctly; the error
+is in the Button task's debounce, which only looked at the first 30 ms of a
+press.
+
+**Fix:** two options were considered.
+1. A longer debounce (50–100 ms): one line, but a bounce longer than the new
+   value still gives an extra request, and every press gets slower.
+2. Wait for the release (chosen): after a request the Button task polls SW3
+   every `APP_BUTTON_POLL_MS` (10 ms) until it has read *released* for
+   `APP_BUTTON_DEBOUNCE_MS` (30 ms) in a row, and only then drops the edges
+   collected in ButtonSem. However long the switch bounces or is held, one
+   press gives one request. Cost: the Button task wakes every 10 ms while SW3
+   is held, which is negligible.
+
+**Re-test after the fix** (board, all breakpoints disabled, `interval 60`):
+[test_logs/2026-10-09_scenario2_debounce_fix.txt](test_logs/2026-10-09_scenario2_debounce_fix.txt)
+
+| Test | Result | `btnIrq` |
+|---|---|---|
+| one short press | `[26252] FED 1 portion(s) (button)`, no other request | 0 → 1 |
+| SW3 held for about 3 s | `[35527] FED 1 portion(s) (button)`, one request | 1 → 2 |
+| `feed 2`, SW3 once during the meal | `[48102] FED 2 portion(s) (command)`, one `[50503] REJECTED button: cooldown` | 2 → 3 |
+
+In this run SW3 did not bounce (one interrupt per press), so the long bounce
+of run 3 was not reproduced against the new code. The re-test shows that the
+fix keeps the normal behaviour and handles a held button; the long-bounce case
+is covered by construction (no new request before 30 ms of stable release).
 
 **Conclusion:** the deferred interrupt handling works as designed: the SW3
 interrupt only gives a semaphore, the Button task does the debouncing, and a
@@ -243,8 +272,9 @@ request waiting in the queue, which was not possible in scenario 1, where the
 Feeder took it immediately. The test also showed something the simulator
 could not: the real SW3 sometimes bounces much longer than 30 ms, so one press
 produced three requests. The cooldown kept the pet from being fed twice, but
-the button handling should be made more robust so the queue cannot fill up
-with bounce requests.
+the bounce requests filled FeedQ. I fixed this in the Button task by waiting
+for a stable release before accepting the next press, and re-tested it on the
+board.
 
 *TODO(eni): draft written with AI help, edit into your own words.*
 

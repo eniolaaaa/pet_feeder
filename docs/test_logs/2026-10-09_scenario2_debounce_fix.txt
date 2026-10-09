@@ -1,0 +1,32 @@
+Console log, FRDM-MCXA153 pet feeder, 2026-10-09, scenario 2 re-test after
+the debounce fix (Button task waits until SW3 is released for 30 ms)
+Serial Monitor (VS Code), COM3, 115200 8N1, line ending CR
+Build: debug, APP_DEMO_TIMING = 1, APP_FAULT_MODE = 0, configTICK_RATE_HZ = 1000
+Board running under the J-Link debugger, all breakpoints disabled.
+Tests: a = one short press of SW3; b = SW3 held for about 3 s;
+c = "feed 2", then SW3 pressed once while the blue LED was on.
+Copied unchanged from the Serial Monitor (last line cut off in the copy).
+
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=330 monitor=234
+---- Sent utf8 encoded message: "interval 60\r" ----
+[  12463] interval now 60 s
+MON heapFree=872 minEver=872 btnIrq=0 rx=12 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[  26252] FED 1 portion(s) (button), today 1/6
+MON heapFree=872 minEver=872 btnIrq=1 rx=12 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[  35527] FED 1 portion(s) (button), today 2/6
+MON heapFree=872 minEver=872 btnIrq=2 rx=12 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+---- Sent utf8 encoded message: "feed 2 \r" ----
+MON heapFree=872 minEver=872 btnIrq=3 rx=20 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[  48102] FED 2 portion(s) (command), today 4/6
+[  50503] REJECTED button: cooldown
+MON heapFree=872 minEver=872 btnIrq=3 rx=20 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=3 rx=20 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[  72463] FED 1 portion(s) (schedule), today 5/6
+MON heapFree=872 minEver=872 btnIrq=3 rx=20 dropR

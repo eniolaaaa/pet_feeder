@@ -42,7 +42,9 @@
 #define SERVO_SETTLE_MS             300u   /* time for the servo to reach position   */
 
 /* ---------- Misc timing ---------- */
-#define APP_BUTTON_DEBOUNCE_MS      30u
+#define APP_BUTTON_DEBOUNCE_MS      30u    /* press must still be down after this; release
+                                              must be stable this long before the next press */
+#define APP_BUTTON_POLL_MS          10u    /* SW3 poll period while waiting for the release */
 #define APP_MONITOR_PERIOD_MS       10000u
 #define APP_HEARTBEAT_PERIOD_MS     1000u
 

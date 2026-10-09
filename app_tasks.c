@@ -179,17 +179,27 @@ static void FeederTask(void *arg)
     }
 }
 
-/* Button: deferred handling of the SW3 interrupt, with debounce. */
+/* Button: deferred handling of the SW3 interrupt, with debounce. One press
+ * gives one request: after a request the task waits until SW3 has been
+ * released for APP_BUTTON_DEBOUNCE_MS without a break, and only then drops
+ * the edges collected so far. Test scenario 2 showed that SW3 can bounce for
+ * longer than the debounce time, and that each late bounce then started a
+ * new debounce cycle that still read the button as pressed. */
 static void ButtonTask(void *arg)
 {
     (void)arg;
     for (;;) {
         xSemaphoreTake(xButtonSem, portMAX_DELAY);
         vTaskDelay(pdMS_TO_TICKS(APP_BUTTON_DEBOUNCE_MS));
-        xSemaphoreTake(xButtonSem, 0);      /* drop edges caused by bounce */
         if (bsp_button_is_pressed()) {
             request_feed(FEED_BUTTON, APP_PORTIONS_BUTTON);
+            uint32_t released_ms = 0;
+            while (released_ms < APP_BUTTON_DEBOUNCE_MS) {
+                vTaskDelay(pdMS_TO_TICKS(APP_BUTTON_POLL_MS));
+                released_ms = bsp_button_is_pressed() ? 0 : released_ms + APP_BUTTON_POLL_MS;
+            }
         }
+        xSemaphoreTake(xButtonSem, 0);      /* drop edges caused by bounce */
     }
 }
 
