@@ -1,0 +1,69 @@
+Console log, FRDM-MCXA153 pet feeder, 2026-10-09, test scenario 2
+Serial Monitor (VS Code), COM3, 115200 8N1, line ending CR
+Build: debug, APP_DEMO_TIMING = 1, APP_FAULT_MODE = 0, configTICK_RATE_HZ = 1000
+Timestamps in [ ] are FreeRTOS ticks: 1 tick = 1 ms
+Board running under the J-Link debugger ("Debug pet_feeder (J-Link)").
+Lines copied unchanged from the Serial Monitor. Long runs of identical
+MON lines between events are cut and marked with [...].
+
+=== Run 1: breakpoints not active (debug session restarted), interval 60 ===
+
+FreeRTOS flexible project - FRDM-MCXA153 pet feeder (type help)
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=330 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=330 monitor=234
+[  20000] FED 1 portion(s) (schedule), today 1/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+---- Sent utf8 encoded message: "interval 60\r" ----
+[  33382] interval now 60 s
+[...]
+[  93382] FED 1 portion(s) (schedule), today 2/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=12 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=0 rx=12 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+---- Sent utf8 encoded message: "feed 2\r" ----
+[ 110169] FED 2 portion(s) (command), today 4/6
+[ 112569] REJECTED button: cooldown
+MON heapFree=872 minEver=872 btnIrq=1 rx=19 dropRx=0 dropFeed=0 dropLog=0
+[ 120000] NEW DAY
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+
+=== Run 2: stops A (app_tasks.c:188) and B (:187), same session ===
+(screenshots s2_a_*, s2_b_*; SW3 held while continuing from stop A)
+
+[...]
+[ 633382] FED 1 portion(s) (schedule), today 1/6
+MON heapFree=872 minEver=872 btnIrq=1 rx=19 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+MON heapFree=872 minEver=872 btnIrq=1 rx=19 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+---- Sent utf8 encoded message: "feed 2 \r" ----
+[ 650152] FED 2 portion(s) (command), today 3/6
+[ 652552] REJECTED button: cooldown
+MON heapFree=872 minEver=872 btnIrq=3 rx=27 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=234
+[...]
+[ 693382] FED 1 portion(s) (schedule), today 4/6
+
+=== Run 3: stop C (app_tasks.c:152), after a board reset ===
+(screenshots s2_c_*; g_buttonIrqs = 8 and FeedQ = 3 at the stop)
+Schedule back at the default 20 s (interval 60 not typed after the reset).
+Breakpoints 187/188 disabled, SW3 pressed once while the blue LED was on.
+The lines after "feed 2" were printed when the board was continued from
+the breakpoint (the Logger could not run while the board was halted).
+
+[1240000] FED 1 portion(s) (schedule), today 2/6
+MON heapFree=872 minEver=872 btnIrq=0 rx=0 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=228
+---- Sent utf8 encoded message: "feed 2\r" ----
+MON heapFree=872 minEver=872 btnIrq=0 rx=7 dropRx=0 dropFeed=0 dropLog=0
+MON stackFree(words) feeder=196 command=310 logger=228 monitor=228
+[1258835] FED 2 portion(s) (command), today 4/6
+[1261235] REJECTED schedule: cooldown
+[1261235] REJECTED button: cooldown
+[1261235] REJECTED button: cooldown
+[1261235] REJECTED button: cooldown
+MON heapFree=872 minEver=872 btnIrq=8 rx=7

@@ -147,11 +147,106 @@ is moving is rejected by the cooldown rule.
 Monitor later: btnIrq=2 (2 edges), 1 request
 ```
 
-**Actual:** breakpoint in `ButtonTask` after the first `xSemaphoreTake`.
-Press SW3 while the blue LED is on. Task List: Button *Running*, Feeder
-*Blocked* (delay). Then set a breakpoint on `st.rejected_total++` (cooldown
-branch) in `FeederTask`.
-*TODO(eni): screenshots + comparison.*
+**Actual (board, 2026-10-09):** debug build, "Debug pet_feeder (J-Link)",
+RTOS Details for the task list, Watch window for the kernel objects:
+`((struct QueueDefinition *)xFeedQueue)->uxMessagesWaiting` / `->uxLength`,
+`((struct QueueDefinition *)xButtonSem)->uxMessagesWaiting` and the ISR
+counter `g_buttonIrqs`. Input: `feed 2`, then SW3 while the blue LED is on.
+Console log: [test_logs/2026-10-09_scenario2_console.txt](test_logs/2026-10-09_scenario2_console.txt).
+
+*Stop A:* `app_tasks.c:188`, the debounce delay, just after the Button task
+took ButtonSem (run 2).
+
+![Stop A, tasks](screenshots/s2_a_tasks.png)
+![Stop A, watch](screenshots/s2_a_watch.png)
+
+| | Expected | Observed |
+|---|---|---|
+| Button | Running (woken by the SW3 ISR) | Running |
+| Feeder | Blocked (servo delay, meal in progress) | Blocked |
+| ButtonSem | 0 (just taken) | 0 |
+| `g_buttonIrqs` | +1 for this press | 2 (1 from run 1 + this press) |
+| FeedQ | 0 / 4 | 0 / 4 |
+
+*Stop B:* `app_tasks.c:187`, the Button task is back at `xSemaphoreTake`
+after sending its request (run 2). The core clock is halted at a breakpoint,
+so the 30 ms debounce only starts on Continue. SW3 was therefore held down
+while continuing from stop A; otherwise the pin check after the debounce sees
+a released button. Pressing SW3 while halted also latches a new falling
+edge, which acts as a bounce during the debounce window.
+
+![Stop B, tasks](screenshots/s2_b_tasks.png)
+![Stop B, watch](screenshots/s2_b_watch.png)
+
+| | Expected | Observed |
+|---|---|---|
+| Button | Running | Running |
+| Feeder | Blocked (still in the meal) | Blocked |
+| FeedQ | 1 / 4: the request waits, the Feeder is busy | 1 / 4 |
+| ButtonSem | 0: the extra give is drained at line 189 | 0 |
+| `g_buttonIrqs` | 3: the extra edge is counted, but gives no extra request | 3 |
+
+Run 2 result: `[650152] FED 2 portion(s) (command)`, then
+`[652552] REJECTED button: cooldown`: 650 152 + 2 400 ms meal = 652 552, so
+the request was handled 0 ms after the meal ended.
+
+*Stop C:* `app_tasks.c:152`, the cooldown rejection in `FeederTask` (run 3,
+after a board reset, schedule back at 20 s, breakpoints A and B disabled).
+
+![Stop C, tasks](screenshots/s2_c_tasks.png)
+![Stop C, watch](screenshots/s2_c_watch.png)
+
+| | Expected | Observed |
+|---|---|---|
+| Feeder | Running | Running |
+| Button | Suspended (waits forever on ButtonSem) | Suspended |
+| Status, Logger | about to show the meal result | Ready: woken by the event bit and LogQ, but lower priority than the Feeder |
+| FeedQ | 0 / 4 (one button request, taken) | 3 / 4 |
+| `g_buttonIrqs` | 1 (one press) | 8 |
+
+Run 3 result:
+```
+[1258835] FED 2 portion(s) (command), today 4/6     meal 1 258 835 .. 1 261 235
+[1261235] REJECTED schedule: cooldown                schedule due at 1 260 000, during the meal
+[1261235] REJECTED button: cooldown
+[1261235] REJECTED button: cooldown
+[1261235] REJECTED button: cooldown
+MON ... btnIrq=8
+```
+So at stop C the Feeder was rejecting the *scheduled* request, and the three
+requests still in FeedQ were all from one SW3 press. FeedQ held 4 of 4
+during the meal: a fifth request would have been dropped (`dropFeed`).
+
+**Comparison:**
+
+| Aspect | Expected | Actual | Verdict |
+|---|---|---|---|
+| Deferred interrupt handling | ISR gives ButtonSem, Button task (prio 4) runs | stop A: Button Running, ButtonSem 0 | match |
+| Request queued during a meal | waits in FeedQ until the Feeder is free | stop B: FeedQ 1/4, Feeder Blocked | match |
+| Cooldown after the meal | button request rejected 0 ms after the meal | runs 2 and 3: rejected at exactly the end of the meal | match |
+| Priority order after the meal | Feeder first, then Status and Logger | stop C: Status and Logger Ready, Feeder Running | match |
+| Bounce during the debounce | extra edge drained, one request | run 2: 3 IRQs, 1 request | match |
+| One press, long bounce | 1 request | run 3: 8 IRQs, 3 requests | **mismatch**: the switch chatters for longer than `APP_BUTTON_DEBOUNCE_MS` (30 ms), so later bounces start a new debounce cycle that still reads the pin as pressed |
+| Other sources | not part of the input | a scheduled request arrived during the meal (20 s schedule) | test setup: set `interval 60` before the test |
+
+The cooldown rule in the Feeder hides the debounce problem from the pet:
+every extra request is rejected. But the extra requests do fill FeedQ, and
+with a full queue a legitimate request (for example the new-day marker) could
+be dropped. Possible fixes: a longer debounce (50–100 ms), or let the Button
+task wait until SW3 is released before it accepts the next press.
+
+**Conclusion:** the deferred interrupt handling works as designed: the SW3
+interrupt only gives a semaphore, the Button task does the debouncing, and a
+button request that arrives during a meal waits in FeedQ and is rejected by
+the cooldown as soon as the meal ends. With the debugger I could see the
+request waiting in the queue, which was not possible in scenario 1, where the
+Feeder took it immediately. The test also showed something the simulator
+could not: the real SW3 sometimes bounces much longer than 30 ms, so one press
+produced three requests. The cooldown kept the pet from being fed twice, but
+the button handling should be made more robust so the queue cannot fill up
+with bounce requests.
+
+*TODO(eni): draft written with AI help, edit into your own words.*
 
 ---
 
