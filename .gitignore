@@ -13,3 +13,13 @@ build/
 *.swp
 Thumbs.db
 .DS_Store
+
+# IoT secrets: never commit certificates, keys or Wi-Fi credentials
+*.pem
+*.key
+*.crt
+certs/
+esp32/**/sdkconfig
+esp32/**/sdkconfig.old
+esp32/**/build/
+esp32/**/managed_components/
