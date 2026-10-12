@@ -5,10 +5,11 @@ the IoT work is finished and tested.
 
 ## Goal
 
-Turn the pet feeder into a real connected device, and learn the basics that
-IoT jobs ask about along the way: device-to-cloud and cloud-to-device
-messaging, MQTT, TLS with device certificates, a device shadow, provisioning,
-OTA updates, reliability, and data and alerts in the cloud.
+Turn the pet feeder into a real connected device, so the cat can be fed and
+checked on from anywhere. Along the way I want to cover the IoT basics:
+device-to-cloud and cloud-to-device messaging, MQTT, TLS with device
+certificates, a device shadow, provisioning, OTA updates, reliability, and
+data and alerts in the cloud.
 
 ## Architecture
 
@@ -31,8 +32,7 @@ OTA updates, reliability, and data and alerts in the cloud.
 - **The cloud can ask, the device decides.** A feed command from the cloud
   goes into FeedQ like a button press (`FEED_REMOTE`), so the Feeder's rules
   still apply. A bug, a replayed message or an attacker can't overfeed the
-  pet. This split (safety at the edge, convenience in the cloud) is a common
-  interview topic.
+  pet. Safety stays on the device, convenience comes from the cloud.
 
 This host-MCU + Wi-Fi-module split is how many commercial products are built
 (the MCU does the product, a certified module does the radio).
@@ -60,7 +60,7 @@ manual and the MCXA153 reference manual (pin mux ALT number) in phase 3.
 | `petfeeder/<thing>/cmd` | cloud → device | 1 | no | `{"cmd":"feed","portions":1,"id":"..."}` |
 | `petfeeder/<thing>/cmd/ack` | device → cloud | 1 | no | `{"id":"...","result":"fed"/"rejected:cooldown"}` |
 | `petfeeder/<thing>/status` | device → cloud | 1 | yes | `online` / `offline` (Last Will) |
-| `$aws/things/<thing>/shadow/...` | both | 1 | — | reported/desired state: interval, today, last meal, firmware version |
+| `$aws/things/<thing>/shadow/...` | both | 1 | n/a | reported/desired state: interval, today, last meal, firmware version |
 
 ## UART link protocol (MCXA153 ↔ ESP32)
 
@@ -83,8 +83,7 @@ a new **Link** task (low priority), and remote requests go into FeedQ.
 ## Phases
 
 Each phase ends with something that runs and a short note in
-`docs/iot/LOG.md` (what was done, what went wrong, what was learned). That log
-is the proof of work for job applications.
+`docs/iot/LOG.md` (what was done, what went wrong, what I learned).
 
 | # | Phase | Result | IoT skill |
 |---|---|---|---|
@@ -114,11 +113,11 @@ Phases 1–3 are the core: after phase 3 the feeder is a working IoT device.
   it public (or copy the IoT part to its own repo) after grading, once the
   secrets check has passed.
 
-## What to say in an interview (the short version)
+## Summary
 
-"I built a connected pet feeder. A FreeRTOS MCU does the real-time control
-and the safety rules; an ESP32 that I programmed in ESP-IDF is the
-connectivity co-processor. It talks MQTT over mutual TLS to AWS IoT Core,
-keeps a device shadow, buffers events while offline, and updates itself over
-the air with rollback. Cloud commands go through the same safety rules as
-the physical button, so the cloud can never overfeed the pet."
+A FreeRTOS MCU does the real-time control and the safety rules. An ESP32,
+programmed in ESP-IDF, is the connectivity co-processor: it talks MQTT over
+mutual TLS to AWS IoT Core, keeps a device shadow, buffers events while
+offline and updates itself over the air with rollback. Commands from the
+cloud go through the same safety rules as the physical button, so the cloud
+can never overfeed the pet.
