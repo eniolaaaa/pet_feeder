@@ -423,14 +423,24 @@ afterwards, see `source/FreeRTOSConfig.h`).
 |---|---|---|---|
 | 14000 → 20000 (140–200 s) | 4 scheduled + 2 `feed` commands | fed, `today` counts 1/6 → 6/6 | as expected |
 | 17424 / 18000 | `feed`, then scheduled meal 5.8 s later | both fed (more than 2 s cooldown) | as expected |
-| 22000 (220 s) | scheduled meal at 6/6 | rejected, red LED on | `REJECTED schedule: daily limit` |
+| 22000 (220 s) | scheduled meal at 6/6 | rejected, red LED on | `REJECTED schedule: daily limit`; red LED came on once the 6 portions of the day had been given |
 | 22568 | `feed 2` at 6/6 | rejected | `REJECTED command: daily limit` |
 | 24000 (240 s) | day timer | `NEW DAY`, counter 0, red LED off | `NEW DAY` |
 | — | `f`, `nn`, `interval` (no value) | help text | help text |
 | whole run | Monitor | no drops, heap stable | `dropRx/dropFeed/dropLog=0`, `heapFree=872` constant |
 
-*TODO(eni): conclusion in your own words, and whether you saw the red LED
-between 220 s and 240 s.*
+**Conclusion:** the daily limit works for every source. After 6 portions
+both the scheduled meal and the `feed 2` command were rejected, and the red
+LED showed it. The `LIMIT` bit is set by the Feeder at the first rejected
+request and read by the Status task through the event group, so the LED
+follows the Feeder's state without the two tasks sharing a variable. The day
+timer reset the counter through FeedQ (a request with 0 portions), so even
+the reset goes through the one task that owns the counter. Wrong or
+incomplete commands only produced the help text, and the Monitor showed no
+dropped messages and a constant free heap during the whole run.
+
+*TODO(eni): draft written with AI help, edit into your own words. Check: did
+the red LED go off again at `NEW DAY` (240 s)?*
 
 ---
 
