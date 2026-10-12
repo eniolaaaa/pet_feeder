@@ -1,4 +1,4 @@
-# Test scenarios — pet feeder
+# Pet feeder: test scenarios
 
 Each scenario has an **expected behaviour** (timing diagram) and the **actual
 behaviour** from the RTOS-aware debugger.
@@ -11,13 +11,13 @@ injects the button presses and UART commands from a script
 `tools/trace_to_ascii.py` turns a time window into a diagram.
 Tick = 1 ms. Demo timing (`APP_DEMO_TIMING = 1`).
 
-**TODO(eni), actual behaviour on the board:** for each scenario, set the
-breakpoints listed, trigger the event, and take screenshots of the task and
-queue tables in the *RTOS Details* view (MCUXpresso for VS Code, debug
-configuration "Debug pet_feeder (J-Link)"). Put them under "Actual" and
-write down where they match the expected diagram and where they differ. The
-study guide asks for this debugger evidence specifically. Simulator output
-doesn't replace it.
+**Actual behaviour on the board:** each scenario was run on the
+FRDM-MCXA153 under the debugger (MCUXpresso for VS Code, configuration
+"Debug pet_feeder (J-Link)"). At breakpoints placed at moments in the
+expected diagram, the task states were captured from the *RTOS Details* view
+and the kernel objects (queue fill levels, semaphore counts, Feeder locals)
+from the Watch window. Console logs are in `test_logs/`. Each scenario
+compares expected and actual behaviour in a table.
 
 ---
 
@@ -110,18 +110,16 @@ priority preemption) behave as designed. The deviations come from how the
 debugger shows kernel state and from the test setup, not from the application.
 To make the scenario repeatable, set `interval 60` before sending `feed 2`.
 
-**Conclusion:** the test confirmed that a console command reaches the Feeder
-through the UART interrupt, the stream buffer and FeedQ, and that the Feeder
-takes over the CPU as soon as the request is queued, because it has the
-higher priority. Two things differed from what I expected. The debugger shows
-tasks that wait forever as Suspended, not Blocked. And my first `feed 2` was
-refused, because a scheduled meal had just finished and the 2 s cooldown was
-still running. That showed me the safety rule works for every source, and
-that on the real board the schedule keeps running during a test, unlike in my
-simulator script. Next time I set `interval 60` first, so the test is
-repeatable.
-
-*TODO(eni): draft written with AI help, edit into your own words.*
+**Conclusion:** The command path works the way I designed it. A typed
+command goes from the UART interrupt through the stream buffer to the Command
+task, and from there through FeedQ to the Feeder. Because the Feeder has a
+higher priority, it takes over straight away, even before the Command task
+has finished sending. Two things surprised me. First, the debugger shows
+tasks that wait forever as Suspended instead of Blocked. Second, my first
+`feed 2` was refused. A scheduled meal had just finished, so the 2 s cooldown
+was still active. In the simulator this never happened, because the script
+didn't send the command close to a meal. So the safety rule works for every
+source, but for a repeatable test I now set `interval 60` first.
 
 ---
 
@@ -265,19 +263,17 @@ of run 3 was not reproduced against the new code. The re-test shows that the
 fix keeps the normal behaviour and handles a held button; the long-bounce case
 is covered by construction (no new request before 30 ms of stable release).
 
-**Conclusion:** the deferred interrupt handling works as designed: the SW3
-interrupt only gives a semaphore, the Button task does the debouncing, and a
-button request that arrives during a meal waits in FeedQ and is rejected by
-the cooldown as soon as the meal ends. With the debugger I could see the
-request waiting in the queue, which was not possible in scenario 1, where the
-Feeder took it immediately. The test also showed something the simulator
-could not: the real SW3 sometimes bounces much longer than 30 ms, so one press
-produced three requests. The cooldown kept the pet from being fed twice, but
-the bounce requests filled FeedQ. I fixed this in the Button task by waiting
-for a stable release before accepting the next press, and re-tested it on the
-board.
-
-*TODO(eni): draft written with AI help, edit into your own words.*
+**Conclusion:** The button handling works as designed. The SW3 interrupt
+only gives a semaphore and the Button task does the rest. When I pressed the
+button during a meal, the request waited in FeedQ and was rejected by the
+cooldown as soon as the meal ended. In this scenario I could actually see the
+request sitting in the queue, which wasn't possible in scenario 1, because
+there the Feeder took it immediately. The board also showed me something the
+simulator couldn't: the real SW3 sometimes bounces for much longer than
+30 ms, and one press turned into three requests. The cooldown still protected
+the pet, but the extra requests filled up FeedQ. I changed the Button task so
+it waits until the button has been released for 30 ms before it accepts a new
+press, and tested that on the board.
 
 ---
 
@@ -381,7 +377,7 @@ Console:
 | Portions | `today` 1/6 | `today` 2/6 | **mismatch**: the pet got 2 meals |
 | Blue LED | on for 1.2 s | on for 2.4 s | **mismatch** |
 | Order of tasks | Feeder first, then Status and Logger | Feeder takes the next request from FeedQ without blocking; Logger prints meal 1 only while the Feeder is blocked in meal 2 | as in the simulator trace |
-| Timing | — | board ticks identical to the simulator's prediction (meal = 1 200 ms, second meal at the end tick of the first) | match |
+| Timing | n/a | board ticks identical to the simulator's prediction (meal = 1 200 ms, second meal at the end tick of the first) | match |
 
 The board shows the same error as the simulator trace above, with the same
 cause. The debugger pins it down to one place: at hit 2 `r.source` is
@@ -392,19 +388,17 @@ in `FeederTask`, which `APP_FAULT_MODE = 1` compiles out
 (`app_tasks.c:149-155`). With `APP_FAULT_MODE = 0` the same input gives
 `REJECTED button: cooldown` (scenario 2, runs 2 and 3).
 
-**Conclusion:** this scenario shows how a missing rule in one task causes an
-error that only appears through the interaction of several tasks. The
-Schedule and Button tasks both produced a correct request, and FeedQ kept the
-button request safe while the Feeder was busy, exactly as designed. But
-because the Feeder has the highest priority and found a request waiting, it
-started the second meal in the same tick the first one ended, before the
-Status and Logger tasks had even run. The RTOS-aware debugger made this
-visible: `r.source` and the two tick values showed which request caused the
-second meal and that there was no gap at all. The fix belongs in the Feeder,
-because it is the only task that drives the servo and sees every request,
-whatever its source.
-
-*TODO(eni): draft written with AI help, edit into your own words.*
+**Conclusion:** This scenario shows how one missing rule can cause an error
+that only appears when several tasks work together. The Schedule and Button
+tasks both sent a valid request, and FeedQ held the button request while the
+Feeder was busy, just like it should. The problem is that the Feeder, without
+the cooldown check, picked up that waiting request immediately. It started
+the second meal in the same tick the first one ended, before Status and
+Logger had even had a chance to run. The debugger made this easy to see:
+`r.source` showed that the second meal came from the button, and the tick
+values showed there was no gap between the two meals. The fix belongs in the
+Feeder, because it is the only task that drives the servo and it sees every
+request, wherever it comes from.
 
 ---
 
@@ -415,20 +409,29 @@ reached, from every source, until the day timer starts a new day. Unknown
 commands get the help text.
 
 **Log:** [test_logs/2026-10-07_console_daily_limit.txt](test_logs/2026-10-07_console_daily_limit.txt)
-(normal build, demo timing, timestamps in ticks of 10 ms).
+(normal build, demo timing, timestamps in ticks of 10 ms: this run used the
+course tick rate of 100 Hz; `configTICK_RATE_HZ` was raised to 1000 Hz
+afterwards, see `source/FreeRTOSConfig.h`).
 
 | Tick (s) | Event | Expected | Observed |
 |---|---|---|---|
 | 14000 → 20000 (140–200 s) | 4 scheduled + 2 `feed` commands | fed, `today` counts 1/6 → 6/6 | as expected |
 | 17424 / 18000 | `feed`, then scheduled meal 5.8 s later | both fed (more than 2 s cooldown) | as expected |
-| 22000 (220 s) | scheduled meal at 6/6 | rejected, red LED on | `REJECTED schedule: daily limit` |
+| 22000 (220 s) | scheduled meal at 6/6 | rejected, red LED on | `REJECTED schedule: daily limit`; red LED came on once the 6 portions of the day had been given |
 | 22568 | `feed 2` at 6/6 | rejected | `REJECTED command: daily limit` |
-| 24000 (240 s) | day timer | `NEW DAY`, counter 0, red LED off | `NEW DAY` |
-| — | `f`, `nn`, `interval` (no value) | help text | help text |
+| 24000 (240 s) | day timer | `NEW DAY`, counter 0, red LED off | `NEW DAY`; red LED went off |
+| n/a | `f`, `nn`, `interval` (no value) | help text | help text |
 | whole run | Monitor | no drops, heap stable | `dropRx/dropFeed/dropLog=0`, `heapFree=872` constant |
 
-*TODO(eni): conclusion in your own words, and whether you saw the red LED
-between 220 s and 240 s.*
+**Conclusion:** The daily limit works for every source. After 6 portions,
+both the scheduled meal and the `feed 2` command were refused and the red LED
+came on. The Feeder sets the `LIMIT` bit in the event group and the Status
+task reads it, so the LED follows the Feeder without the two tasks sharing a
+variable. The new day also goes through FeedQ (as a request with 0 portions),
+so only the Feeder ever touches the counter. When it came in, the Feeder
+cleared the bit and the red LED went off. Wrong or incomplete commands just
+got the help text, and the Monitor showed no dropped messages and a stable
+heap the whole time.
 
 ---
 
@@ -502,7 +505,12 @@ is `REJECTED schedule: cooldown`, as designed.
 (`bsp.h` is the only seam), so register-level clock setup is never run
 there. Faults in the board layer only appear on the real hardware.
 
-*TODO(eni): what you learned from this in your own words, and, if you want,
-reproduce it (put `clk_lock();` back at the end of `clocks_and_resets()`) and
-take a screenshot of the fault registers in the debugger's peripheral/register
-view.*
+**What I learned:** A HardFault looked like a dead end at first, but the
+fault registers tell you a lot. CFSR showed it was a precise BusFault, and
+BFAR gave the exact address. Looking that address up in the device header
+pointed me to CTIMER2 and the one function that writes to it. The actual
+cause was somewhere else, though: an earlier function had locked the clock
+registers, so the CTIMER2 setup was silently ignored. Both parts worked fine
+on their own and only failed together, and the ignored write didn't leave any
+error behind. Now, when a peripheral crashes on its first access, the first
+thing I check is whether its clock and reset are set up.

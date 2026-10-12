@@ -1,8 +1,10 @@
-# High-level design — pet feeder
+# Pet feeder: high-level design
 
 7 tasks + the timer service task, 2 interrupt handlers. The names below are
-exactly the names used in the code (`source/app_tasks.c`, `board/bsp_mcxa153_regs.c`) and the
-ones shown in the MCUXpresso FreeRTOS Task List / Queue List views.
+exactly the names used in the code (`source/app_tasks.c`,
+`board/bsp_mcxa153_regs.c`): the task names appear in the debugger's RTOS
+Details view, the queue and semaphore names in the FreeRTOS queue registry
+(`vQueueAddToRegistry`).
 
 ```mermaid
 flowchart LR
@@ -25,6 +27,7 @@ flowchart LR
     F -- "event group<br/>FEEDING, LIMIT,<br/>STATE_CHANGE" --> ST[Status<br/>prio 2]
     ST --> LEDS((red/blue LED))
     HB[Heartbeat timer 1 s<br/>Tmr Svc] --> GREEN((green LED))
+    F -. "event group<br/>FEEDING (read: no blink<br/>during a meal)" .-> HB
 
     F -- "LogQ" --> L[Logger<br/>prio 1]
     S -- "LogQ" --> L
