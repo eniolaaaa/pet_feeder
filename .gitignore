@@ -13,3 +13,6 @@ build/
 *.swp
 Thumbs.db
 .DS_Store
+
+# Generated 3D print files (export from mechanics/feeder.scad)
+mechanics/stl/
