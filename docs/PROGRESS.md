@@ -8,12 +8,12 @@ I know it was different.*
 
 | Category | What it covers | Hours |
 |----------|----------------|------:|
-| Research | FreeRTOS book (Barry) and MIC5 workshops; study guide and assessment criteria; MCXA153 reference manual (clocks, CTIMER, GPIO, LPUART, NVIC); FRDM-MCXA153 board documentation | 14 |
+| Research | FreeRTOS book (Barry) and MIC5 workshops; study guide and assessment criteria; MCXA153 reference manual (clocks, CTIMER, GPIO, LPUART, NVIC); FRDM-MCXA153 board documentation | 10 |
 | Environment setup | MCUXpresso for VS Code, SDK, Arm GCC toolchain, CMake/Ninja build; MCU-Link probe (LinkServer vs J-Link firmware); `freertos_hello` on the board; serial console; git and GitHub | 9 |
 | Project design | tasks, priorities and scheduling choice; inter-task communication choices; ISRs; high-level design; PC simulator and expected timing diagrams | 13 |
 | Implementation | the 7 tasks and RTOS objects; register-level board layer (clocks, servo PWM on CTIMER1, SW3 interrupt, LEDs, LPUART0 console); console commands; safety rules (cooldown, daily limit); fault injection; debounce fix | 20 |
 | Configuration and measurement | `FreeRTOSConfig.h` (tick rate, priorities, heap, stack overflow check, debugger support); run-time statistics on CTIMER2; heap and stack measurements; RAM budget | 7 |
-| Test and debugging | startup HardFault (fault registers, cause, fix); test scenarios 1–3 on the board with the RTOS-aware debugger; debounce bug found, fixed and re-tested; daily-limit test | 15 |
+| Test and debugging | startup HardFault (fault registers, cause, fix); test scenarios 1–3 on the board with the RTOS-aware debugger; debounce bug found, fixed and re-tested; daily-limit test | 19 |
 | Documentation | README (scheduling, inter-task communication, interrupts); design; test scenario write-ups; project plan; progress log | 12 |
 | **Total** | | **90** |
 
