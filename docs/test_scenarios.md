@@ -11,13 +11,13 @@ injects the button presses and UART commands from a script
 `tools/trace_to_ascii.py` turns a time window into a diagram.
 Tick = 1 ms. Demo timing (`APP_DEMO_TIMING = 1`).
 
-**TODO(eni), actual behaviour on the board:** for each scenario, set the
-breakpoints listed, trigger the event, and take screenshots of the task and
-queue tables in the *RTOS Details* view (MCUXpresso for VS Code, debug
-configuration "Debug pet_feeder (J-Link)"). Put them under "Actual" and
-write down where they match the expected diagram and where they differ. The
-study guide asks for this debugger evidence specifically. Simulator output
-doesn't replace it.
+**Actual behaviour on the board:** each scenario was run on the
+FRDM-MCXA153 under the debugger (MCUXpresso for VS Code, configuration
+"Debug pet_feeder (J-Link)"). At breakpoints placed at moments in the
+expected diagram, the task states were captured from the *RTOS Details* view
+and the kernel objects (queue fill levels, semaphore counts, Feeder locals)
+from the Watch window. Console logs are in `test_logs/`. Each scenario
+compares expected and actual behaviour in a table.
 
 ---
 
@@ -415,7 +415,9 @@ reached, from every source, until the day timer starts a new day. Unknown
 commands get the help text.
 
 **Log:** [test_logs/2026-10-07_console_daily_limit.txt](test_logs/2026-10-07_console_daily_limit.txt)
-(normal build, demo timing, timestamps in ticks of 10 ms).
+(normal build, demo timing, timestamps in ticks of 10 ms: this run used the
+course tick rate of 100 Hz; `configTICK_RATE_HZ` was raised to 1000 Hz
+afterwards, see `source/FreeRTOSConfig.h`).
 
 | Tick (s) | Event | Expected | Observed |
 |---|---|---|---|
@@ -502,7 +504,17 @@ is `REJECTED schedule: cooldown`, as designed.
 (`bsp.h` is the only seam), so register-level clock setup is never run
 there. Faults in the board layer only appear on the real hardware.
 
-*TODO(eni): what you learned from this in your own words, and, if you want,
+**What I learned:** a HardFault is not a dead end. The fault status
+registers say what kind of fault it was (here a precise BusFault, escalated
+to a HardFault), and BFAR gives the exact address that was accessed. Looking
+that address up in the device header pointed straight at the CTIMER2
+register and the one function that writes it. The real cause was not in that
+function but in an earlier, unrelated one that locked the clock registers:
+two parts that each worked on their own failed together, and the write that
+"didn't happen" left no error behind. Since then, when a peripheral faults
+on its first access, I check its clock and reset bits first.
+
+*TODO(eni): draft written with AI help, edit into your own words. Optional:
 reproduce it (put `clk_lock();` back at the end of `clocks_and_resets()`) and
 take a screenshot of the fault registers in the debugger's peripheral/register
 view.*
