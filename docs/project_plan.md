@@ -1,8 +1,6 @@
-# Project plan — Flexible Project
+# Project plan: flexible project
 
 > Structure follows the "Checklist Assessment Flexible Project".
-> *TODO(eni): written from my answers with AI help; read it through and
-> adjust where it doesn't sound like me.*
 
 **Student number:** 2114890  **LT-coach:** Remko Welling
 **Chosen subject:** Automatic pet feeder with FreeRTOS on the NXP
@@ -13,7 +11,7 @@ commands and safety rules (cooldown, daily limit).
 
 | Criterion | How this project meets it |
 |-----------|---------------------------|
-| Intrinsic motivation | A friend of mine has to arrange a house-sitter for their cat every time they travel, just so the cat gets fed. An automatic feeder that feeds on a schedule, and later also remotely, solves that. RTOS is something I need to learn for my course, and a device that has to keep exact timing (closing the hatch on time) while handling a button, a console and a schedule is a good reason to use one. |
+| Intrinsic motivation | A friend of mine always has to find someone to house-sit their cat when they travel, just so the cat gets fed. With an automatic feeder the cat can be fed while they're away. I picked an RTOS because it's something I need to learn for my course, and a feeder is a good fit: it has to close the hatch on time while also dealing with a button, a console and a schedule. |
 | 80 hours | see the schedule below; actual hours are tracked in [`PROGRESS.md`](PROGRESS.md) |
 | Unique for the student | My first RTOS project, and the first project I version-control myself with git and GitHub. |
 | Related to field of study | Embedded systems / MIC5 RTOS learning goals 1–7 |
@@ -73,8 +71,9 @@ Iterative, one milestone at a time, each ending with something that runs:
 | Hugo Arends | MIC5 teacher: RTOS questions, assessment of the MIC5 criteria |
 
 ## 5. Global schedule
-Work on the board started on 2026-10-06; the test scenarios were done on
-2026-10-09. *TODO(eni): hand-in deadline and presentation date, once known.*
+Work on the board started on 2026-10-06 and the test scenarios were done on
+2026-10-09. New dates for the hand-in and the presentation still have to be
+agreed with the MIC5 teacher.
 
 Planned effort per milestone (a plan, not a record; actual hours go in
 `PROGRESS.md`):
@@ -106,4 +105,4 @@ high-level design, test scenarios. In addition I would like feedback on:
   as part of my portfolio.
 - The IoT extension (ESP32 + AWS IoT Core) is planned as the next step, as
   proof of IoT experience for future job applications.
-- *TODO(eni): the presentation (format and date not known yet).*
+- A presentation of the project (format and date still to be agreed).

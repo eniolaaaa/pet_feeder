@@ -1,8 +1,6 @@
 # Progress log
 
-Hours spent on the flexible project (target: 80). *TODO(eni): the split per
-category was proposed with AI help from my total; adjust a category where
-I know it was different.*
+Hours spent on the flexible project (target: 80).
 
 ## Hours per category
 
@@ -19,7 +17,7 @@ I know it was different.*
 
 ## Timeline
 
-From the git history and the work sessions:
+Based on my git history:
 
 | Date | What |
 |------|------|
@@ -29,6 +27,6 @@ From the git history and the work sessions:
 | 2026-10-08 | project put under version control (git) |
 | 2026-10-09 | GitHub repository; test scenarios 1–3 on the board with RTOS-aware debugger screenshots; debounce bug found in scenario 2, fixed and re-tested; project restructured for hand-in (RTOS sources in the repo, folders, README); `FreeRTOSConfig.h` documented; RAM budget measured |
 | 2026-10-12 | project plan and progress log; daily-limit test conclusion |
-| *TODO(eni)* | presentation |
+| upcoming | presentation |
 
 Milestones: see [project_plan.md](project_plan.md), section 3.

@@ -1,4 +1,4 @@
-# High-level design — pet feeder
+# Pet feeder: high-level design
 
 7 tasks + the timer service task, 2 interrupt handlers. The names below are
 exactly the names used in the code (`source/app_tasks.c`,
